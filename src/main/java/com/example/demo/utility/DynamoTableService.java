@@ -9,6 +9,8 @@ import com.amazonaws.services.dynamodbv2.model.ListTablesResult;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import com.example.demo.config.DynamoDBConfig;
+import com.example.demo.model.Bank;
+import com.example.demo.model.BankList;
 import com.example.demo.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -37,6 +39,9 @@ public class DynamoTableService {
 
         modelClasses = new ArrayList<>();
         modelClasses.add(Person.class);
+        modelClasses.add(BankList.class);
+        modelClasses.add(Bank.class);
+
     }
 
     public void initializeDynamoDbTables() throws Exception {

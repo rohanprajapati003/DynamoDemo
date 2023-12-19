@@ -11,6 +11,8 @@ public class AbstractIntegrationTest {
     @Autowired
     private DynamoTableService dynamoTableService;
 
+
+
     @Before
     public void setUp() throws Exception {
         dynamoTableService.initializeDynamoDbTables();

@@ -5,7 +5,6 @@ import com.example.demo.model.Person;
 import com.example.demo.model.dto.PersonDTO;
 import com.example.demo.repo.PersonRepository;
 import com.example.demo.service.impls.PersonServiceImpl;
-import com.example.demo.utility.Converter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,11 +29,11 @@ public class PersonSerivceTests {
     @Mock
     PersonRepository personRepository;
 
-    @Autowired
+    @Mock
     private DynamoDBMapper dynamoDBMapper;
 
     @Mock
-    private Converter converter;
+    private com.example.demo.utility.converter converter;
 
     Person mockPerson;
 
@@ -67,9 +65,7 @@ public class PersonSerivceTests {
         Person p3= new Person("xyz","Rohan",24);
 
         list.add(p);list.add(p1);list.add(p2);list.add(p3);
-
         Mockito.when(personRepository.getPersonList()).thenReturn(list);
-
         List<Person> people = personService.findAll();
 
         assertEquals(4,people.size());
@@ -85,23 +81,12 @@ public class PersonSerivceTests {
         assertEquals("Not Found",runtimeException.getMessage());
     }
 
-    @Test
-    void testDeleteFound(){
-
-        Mockito.when(personRepository.getPersonById("Abc")).thenReturn(mockPerson);
-        personService.deletePersonById("Abc");
-
-        Mockito.verify(personService,Mockito.times(1)).deletePersonById("Abc");
-
-    }
-
 
 
     @Test
     void testCreatePerson(){
 
         PersonDTO personDTO = new PersonDTO("abc","Rohan",22);
-
         Person expectedPerson = new Person("abc","Rohan",22);
 
         Mockito.when(converter.convertDtoToModel(personDTO,Person.class)).thenReturn(expectedPerson);
@@ -110,6 +95,49 @@ public class PersonSerivceTests {
         Person person = personService.createPerson(personDTO);
 
         assertEquals(expectedPerson,person);
+
+    }
+
+    @Test
+    void testGetPersonById(){
+
+        String personID = "abc";
+        Person expectedPerson = new Person("abc","Rohan",22);
+        Mockito.when(personRepository.getPersonById(personID)).thenReturn(expectedPerson);
+        Person personById = personService.getPersonById(personID);
+        assertEquals(personID,personById.getId());
+
+    }
+    @Test
+    void testNotFoundPersonById(){
+
+        String nonExistingPersonId = "100";
+
+        // Mock PersonRepository behavior for a non-existing person
+        Mockito.when(personRepository.getPersonById(nonExistingPersonId)).thenReturn(null);
+
+        // Act and Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            personService.getPersonById(nonExistingPersonId);
+        });
+
+        // Verify that getPersonById was called with the expected argument
+        Mockito.verify(personRepository).getPersonById(nonExistingPersonId);
+
+        // Verify the exception message
+        assertEquals("Not Exist", exception.getMessage());
+
+    }
+
+
+    @Test
+    void testNameShouldNotbeEmpty(){
+        PersonDTO personDTO = new PersonDTO("abc","",22);
+
+        Exception exception = assertThrows(RuntimeException.class, () ->
+                personService.createPerson(personDTO));
+        assertEquals("Name should not be empty", exception.getMessage());
+
 
     }
 
@@ -132,6 +160,20 @@ public class PersonSerivceTests {
 
         // Verify that deletePersonById was called with the expected argument
         Mockito.verify(personRepository).deletePersonById(personId);
+    }
+
+    @Test
+    void deleteThrowExcpetion(){
+
+        String personId = "1";
+
+        // Mock PersonRepository behavior
+        Mockito.when(personRepository.getPersonById(personId))
+                .thenReturn(null);
+        Exception exception = assertThrows(RuntimeException.class, () ->
+                personService.deletePersonById(personId));
+        assertEquals("Not Found", exception.getMessage());
+
     }
 
 

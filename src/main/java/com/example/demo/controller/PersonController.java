@@ -33,6 +33,13 @@ public class PersonController {
 
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<?> getCountByPersonId(){
+
+        return ResponseEntity.status(HttpStatus.OK).body(personService.getCount());
+
+    }
+
     @PostMapping("/add")
     public ResponseEntity<?> createPerson(@RequestBody PersonDTO personDTO){
 
@@ -47,6 +54,14 @@ public class PersonController {
         personService.deletePersonById(personId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @GetMapping(value = "/name/{personName}")
+    public ResponseEntity<?> getPersonByName(@PathVariable(value = "personName", required = true) String personName){
+
+        return ResponseEntity.status(HttpStatus.OK).body(personService.getPersonByName(personName));
+
+    }
+
 
 
 }

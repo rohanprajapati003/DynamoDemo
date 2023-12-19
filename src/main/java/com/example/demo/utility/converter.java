@@ -4,11 +4,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Converter {
+public class converter {
 
     private final ModelMapper modelMapper;
 
-    public Converter() {
+    public converter() {
 
         this.modelMapper = new ModelMapper();
         System.out.println("Constructer Call");

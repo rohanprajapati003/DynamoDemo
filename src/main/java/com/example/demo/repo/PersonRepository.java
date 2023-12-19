@@ -7,8 +7,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.example.demo.model.Person;
-import com.example.demo.utility.Converter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 
@@ -18,12 +18,13 @@ import java.util.Map;
 
 
 @Repository
+@Component
 public class PersonRepository  {
 
     @Autowired
-    private Converter converter;
+    private com.example.demo.utility.converter converter;
     @Autowired
-    private DynamoDBMapper dynamoDBMapper;
+    private DynamoDBMapper                     dynamoDBMapper;
 
     public Person getPersonById(String id){
 
@@ -40,14 +41,13 @@ public class PersonRepository  {
         if (!CollectionUtils.isEmpty(results)) {
             return results.get(0);
         } else {
-            return new Person("1","Dummy",21);
+            return null;
         }
 
     }
 
 
     public Person savePerson(Person person) {
-        System.out.println("Dynamo");
         dynamoDBMapper.save(person);
         return person;
     }
@@ -65,5 +65,37 @@ public class PersonRepository  {
         Person person = getPersonById(personId);
         dynamoDBMapper.delete(person);
 
+    }
+
+    public int getCountByPersonId(String id) {
+        Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+        eav.put(":id", new AttributeValue().withS(id));
+        DynamoDBQueryExpression<Person> queryExpression = new DynamoDBQueryExpression<Person>()
+                .withKeyConditionExpression("id = :id")
+                .withExpressionAttributeValues(eav);
+        int clientCount = dynamoDBMapper.count(Person.class, queryExpression);
+        return clientCount;
+    }
+
+    public int getAllCount() {
+        int clientCount = dynamoDBMapper.count(Person.class,new DynamoDBScanExpression());
+        return clientCount;
+    }
+
+    public Person getPersonByName(String name) {
+        Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+        eav.put(":id", new AttributeValue().withS("dcd7f1c5-ed64-4c99-b10d-f9f92302a54c"));
+        eav.put(":name", new AttributeValue().withS(name));
+        DynamoDBQueryExpression<Person> queryExpression = new DynamoDBQueryExpression<Person>()
+                .withKeyConditionExpression("id = :id and #name = :name")
+                .withExpressionAttributeNames(Map.of("#name", "name"))
+                .withExpressionAttributeValues(eav);
+
+        List<Person> results = dynamoDBMapper.query(Person.class, queryExpression);
+        if (!CollectionUtils.isEmpty(results)) {
+            return results.get(0);
+        } else {
+            return null;
+        }
     }
 }

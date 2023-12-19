@@ -15,4 +15,10 @@ public interface PersonService {
 
 
     void deletePersonById(String personId);
+
+    Integer getCountByPersonId(String personId);
+
+    Integer getCount();
+
+    Person getPersonByName(String name);
 }

@@ -4,21 +4,21 @@ import com.example.demo.model.Person;
 import com.example.demo.model.dto.PersonDTO;
 import com.example.demo.repo.PersonRepository;
 import com.example.demo.service.PersonService;
-import com.example.demo.utility.Converter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class PersonServiceImpl implements PersonService {
 
 
     @Autowired
-    private PersonRepository personRepository;
+    private PersonRepository                   personRepository;
     @Autowired
-    private Converter converter;
+    private com.example.demo.utility.converter converter;
 
     @Override
     public List<Person> findAll() {
@@ -27,16 +27,24 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public Person getPersonById(String id) {
-     return personRepository.getPersonById(id);
+     Person p =personRepository.getPersonById(id);
+
+
+     if(Objects.nonNull(p)){
+         return p;
+     }else {
+         throw new RuntimeException("Not Exist");
+     }
     }
 
     @Override
     public Person createPerson(PersonDTO personDTO) {
         System.out.println(personDTO);
-        /*Person person = new Person();
-        person.setId(personDTO.getId());
-        person.setName(personDTO.getName());
-        person.setAge(personDTO.getAge());*/
+
+        if(StringUtils.isEmpty(personDTO.getName())){
+            throw new RuntimeException("Name should not be empty");
+        }
+
         Person person = converter.convertDtoToModel(personDTO, Person.class);
        // System.out.println(person);
         Person person1 = personRepository.savePerson(person);
@@ -45,7 +53,6 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public void deletePersonById(String personId) {
-
         Person personById = personRepository.getPersonById(personId);
         if(personById==null){
             throw new RuntimeException("Not Found");
@@ -53,4 +60,22 @@ public class PersonServiceImpl implements PersonService {
 
         personRepository.deletePersonById(personId);
     }
+
+    @Override
+    public Integer getCountByPersonId(String personId) {
+
+      return  personRepository.getCountByPersonId(personId);
+    }
+
+    @Override
+    public Integer getCount() {
+            return personRepository.getAllCount();
+    }
+
+    @Override
+    public Person getPersonByName(String name) {
+        return personRepository.getPersonByName(name);
+    }
+
+
 }
