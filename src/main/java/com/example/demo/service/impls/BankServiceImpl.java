@@ -20,12 +20,12 @@ public class BankServiceImpl implements BankService {
 	BankRepo bankRepo;
 
 	@Autowired
-	private com.example.demo.utility.converter converter;
+	private converter converterd;
 
 	@Override
 	public BankDTO addBank(BankDTO bankDTO) {
 
-		Bank bank = converter.convertDtoToModel(bankDTO, Bank.class);
+		Bank bank = converterd.convertDtoToModel(bankDTO, Bank.class);
 		bankRepo.saveBank(bank);
 		return  bankDTO;
 	}
@@ -36,7 +36,7 @@ public class BankServiceImpl implements BankService {
 		if (Objects.isNull(bank)) {
 			return null;
 		}
-		return converter.convertDtoToModel(bank, BankDTO.class);
+		return converterd.convertDtoToModel(bank, BankDTO.class);
 	}
 
 	@Override

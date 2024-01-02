@@ -12,6 +12,7 @@ import com.example.demo.config.DynamoDBConfig;
 import com.example.demo.model.Bank;
 import com.example.demo.model.BankList;
 import com.example.demo.model.Person;
+import com.example.demo.model.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.context.annotation.Import;
@@ -41,6 +42,7 @@ public class DynamoTableService {
         modelClasses.add(Person.class);
         modelClasses.add(BankList.class);
         modelClasses.add(Bank.class);
+        modelClasses.add(UserRole.class);
 
     }
 

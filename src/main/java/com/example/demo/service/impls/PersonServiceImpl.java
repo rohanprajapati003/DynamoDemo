@@ -22,6 +22,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public List<Person> findAll() {
+        System.out.println("In Find ALl Method");
         return personRepository.getPersonList();
     }
 

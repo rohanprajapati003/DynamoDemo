@@ -9,13 +9,10 @@ public class converter {
     private final ModelMapper modelMapper;
 
     public converter() {
-
         this.modelMapper = new ModelMapper();
-        System.out.println("Constructer Call");
     }
 
     public ModelMapper getModelMapper() {
-        System.out.println("Model Callled");
         return modelMapper;
     }
 
@@ -24,8 +21,6 @@ public class converter {
     }
 
     public <S, D> D convertDtoToModel(S source, Class<D> destinationType) {
-        System.out.println("Check");
         return getModelMapper().map(source, destinationType);
     }
-
 }

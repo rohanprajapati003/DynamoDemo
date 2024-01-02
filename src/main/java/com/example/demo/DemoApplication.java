@@ -1,7 +1,7 @@
 package com.example.demo;
 
-import com.example.demo.utility.DynamoTableService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.amazonaws.services.dynamodbv2.document.Item;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
